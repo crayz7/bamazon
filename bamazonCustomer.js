@@ -41,7 +41,7 @@ function start() {
       	  // Get information of the chosen item
       	  var chosenItem;
           for (var i = 0; i < results.length; i++) {
-            if (results[i].item_id === answer.choice) {
+            if (results[i].product_name === answer.choice) {
               chosenItem = results[i];
               console.log(chosenItem.stock_quantity);
               start();
