@@ -22,11 +22,13 @@ function start() {
       .prompt([
         {
           name: "choice",
-          type: "rawlist",
+          type: "list",
           choices: function() {
             var choiceArray = [];
             for (var i = 0; i < results.length; i++) {
-              choiceArray.push("Item: " + results[i].product_name + ", Department: " + results[i].department_name + ", Price: " + results[i].price);
+              // using the below for choiceArray breaks the for loop for getting item information
+              // choiceArray.push("Item: " + results[i].product_name + ", Department: " + results[i].department_name + ", Price: " + results[i].price);
+              choiceArray.push(results[i].product_name);
             }
             return choiceArray;
           },
@@ -43,21 +45,32 @@ function start() {
           for (var i = 0; i < results.length; i++) {
             if (results[i].product_name === answer.choice) {
               chosenItem = results[i];
-              console.log(chosenItem.stock_quantity);
-              start();
             }
           }
  		  
- 		  // Determine if there is enough quantity       
-          //if (parseInt(answer.buy) > chosenItem.stock_quantity) {
-      	    //console.log("Insufficient supply, order cancelled!");
-      	    //start();
-      	//} else {
-      	    //console.log(chosenItem.product_name);
-      	//}
+ 		 // Determine if there is enough quantity       
+           if (parseInt(answer.buy) > chosenItem.stock_quantity) {
+      	     console.log("Insufficient supply, order cancelled!");
+      	     start();
+      	  } else {
+      	     connection.query(
+      	       "UPDATE products SET ? WHERE ?",
+      	       [
+      	         {
+      	           stock_quantity: chosenItem.stock_quantity - answer.buy
+      	         },
+      	         {
+                   item_id: chosenItem.item_id
+                 }
+      	       ],
+      	         function(err) {
+      	         	if (err) throw err;
+      	         	console.log("Item purchased. Your price is $" + answer.buy * chosenItem.price);
+      	         	start();
+      	         }
+      	      );
+      	   }
       
       });
    })
 }
- 
-//connection.end();
