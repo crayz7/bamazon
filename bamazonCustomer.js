@@ -57,7 +57,7 @@ function start() {
       	       "UPDATE products SET ? WHERE ?",
       	       [
       	         {
-      	           stock_quantity: chosenItem.stock_quantity - answer.buy
+      	           stock_quantity: parseInt(chosenItem.stock_quantity) - parseInt(answer.buy)
       	         },
       	         {
                    item_id: chosenItem.item_id
